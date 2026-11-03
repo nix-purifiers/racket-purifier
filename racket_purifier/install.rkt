@@ -1,0 +1,25 @@
+#lang racket/base
+(require pkg/lib json racket/list racket/path)
+(define args (current-command-line-arguments))
+(define data (call-with-input-file (vector-ref args 0) read-json))
+(define sources (string->path (vector-ref args 1)))
+(define descs
+  (for/list ([item (in-list (hash-ref data 'packages))])
+    (define path (build-path sources (hash-ref item 'entry)))
+    (define subpath (hash-ref item 'subpath))
+    (define directory? (member (hash-ref item 'type) '("git" "git-url" "github")))
+    (pkg-desc (path->string (if (and directory? (not (equal? subpath ""))) (build-path path subpath) path))
+              (if directory? 'dir 'file) (hash-ref item 'name)
+              (hash-ref item 'checksum) #t)))
+(unless (equal? (symbol->string (system-type 'vm)) (hash-ref data 'vm))
+  (error 'racket-purifier "Racket VM changed; regenerate the lock"))
+(define actual-sdk
+  (for/list ([name (in-list (installed-pkg-names #:scope 'installation))])
+    (define info (hash-ref (installed-pkg-table #:scope 'installation) name))
+    (hasheq 'name name 'checksum (pkg-info-checksum info))))
+(unless (equal? actual-sdk (hash-ref data 'sdkPackages))
+  (error 'racket-purifier "Racket SDK package baseline changed; regenerate the lock"))
+(unless (null? descs)
+ (parameterize ([current-pkg-scope 'user] [current-pkg-catalogs '()])
+  (with-pkg-lock
+    (pkg-install descs #:dep-behavior 'fail #:strip 'source #:quiet? #t))))
