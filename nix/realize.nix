@@ -16,10 +16,10 @@ let
     src = /. + project;
     lockFile = /. + companion;
   };
-  lock = import ./read-lock.nix { inherit (pkgs) lib; } args;
+  lock = import ../lib-overlays/default/read-lock.nix { inherit (pkgs) lib; } args;
   output =
     if target == "environment" then
-      pkgs.callPackage ./environment.nix {
+      pkgs.callPackage ../pkgs/build-racket-project/environment.nix {
         inherit
           purifier
           nativeRacket
@@ -28,7 +28,7 @@ let
           ;
       } { inherit lock; }
     else if target == "release" then
-      (pkgs.callPackage ./build-project.nix {
+      (pkgs.callPackage ../pkgs/build-racket-project/default.nix {
         inherit
           purifier
           nativeRacket

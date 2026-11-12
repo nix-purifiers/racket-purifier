@@ -55,13 +55,13 @@ runCommand "purified-racket-environment"
   ''
     export PATH=${toolchain}/bin:$PATH HOME="$TMPDIR/home" PLTUSERHOME="$TMPDIR/home" XDG_CACHE_HOME="$TMPDIR/cache" XDG_CONFIG_HOME="$TMPDIR/config"
     mkdir -p "$HOME" "$out/addon"
-    racket -A "$out/addon" ${../racket_purifier/install.rkt} ${manifest} ${sources}
-    racket -A "$out/addon" ${../racket_purifier/check-installed.rkt} ${manifest}
+    racket -A "$out/addon" ${../../racket_purifier/install.rkt} ${manifest} ${sources}
+    racket -A "$out/addon" ${../../racket_purifier/check-installed.rkt} ${manifest}
     find "$out/addon" -type f -exec touch -h -d @1 {} +
     ${lib.optionalString (checked.data.packages != [ ]) ''
       racket -A "$out/addon" -N raco -l- raco/main setup --avoid-main --no-docs --jobs 1 --pkgs ${names}
     ''}
-    racket ${../racket_purifier/config.rkt} ${nativeRacket}/etc/racket/config.rktd "$out" "$out/config"
+    racket ${../../racket_purifier/config.rkt} ${nativeRacket}/etc/racket/config.rktd "$out" "$out/config"
     cp ${manifest} "$out/capture.json"
     ln -s ${sources} "$out/sources"
   ''

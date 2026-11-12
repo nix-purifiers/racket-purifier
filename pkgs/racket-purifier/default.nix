@@ -16,12 +16,12 @@
 stdenvNoCC.mkDerivation {
   pname = "racket-purifier";
   version = "0.1.0";
-  src = ../.;
+  src = ../..;
   nativeBuildInputs = [ makeWrapper ];
   dontBuild = true;
   installPhase = ''
     mkdir -p "$out/bin" "$out/lib/racket-purifier"
-    cp -r racket_purifier nix "$out/lib/racket-purifier/"
+    cp -r racket_purifier nix lib-overlays pkgs "$out/lib/racket-purifier/"
     install -m755 bin/racket-purifier "$out/bin/racket-purifier"
     substituteInPlace "$out/lib/racket-purifier/nix/realize.nix" \
       --replace-fail '@nixpkgs@' '${nixpkgsSrc}' \
