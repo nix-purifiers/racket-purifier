@@ -33,7 +33,7 @@
     ]),
 }:
 let
-  lock = purifier.checkLock (import ./read-lock.nix { inherit lib; } { inherit src lockFile; });
+  lock = purifier.checkLock (import ../../lib-overlays/default/read-lock.nix { inherit lib; } { inherit src lockFile; });
   environment = import ./environment.nix {
     inherit
       lib
@@ -71,7 +71,7 @@ let
         chmod -R u+w "$out/source"
         export PLTCONFIGDIR=${environment}/config PLTADDONDIR="$out/addon"
         export RACKET_PROJECT_NAME=${lib.escapeShellArg lock.data.project.name}
-        racket ${../racket_purifier/project.rkt} link ${manifest} "$out/source"
+        racket ${../../racket_purifier/project.rkt} link ${manifest} "$out/source"
         cd "$out/source"
         ${buildCommand}
         ${lib.optionalString doCheck checkCommand}
@@ -98,7 +98,7 @@ let
         chmod -R u+w source
         cp ${lockFile} source/racket-purifier.lock.json
         find source -type f -exec touch -h -d @1 {} +
-        racket ${../racket_purifier/project.rkt} release ${manifest} "$PWD/source" "$out"
+        racket ${../../racket_purifier/project.rkt} release ${manifest} "$PWD/source" "$out"
       '';
 in
 assert lock.problems == [ ];
