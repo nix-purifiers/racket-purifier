@@ -20,6 +20,7 @@ source = project / "source"
 runtime_library = runtime / "lib/libracketcs.so"
 sdk_proof = json.loads((runtime / "nix-support/original-sdk.json").read_text())
 assert Path(sdk_proof["sdk"]).resolve() == sdk, "Foreign CS runtime SDK"
+assert Path(sdk_proof["library"]).resolve() == runtime_library.resolve(), "Foreign shared CS runtime owner"
 assert sha(runtime_library) == sdk_proof["librarySha256"], "CS runtime library changed"
 for name, expected in sdk_proof["originalFiles"].items():
     assert sha(Path(name)) == expected, "Original CS SDK artifact changed"
@@ -103,5 +104,6 @@ after = {relative: sha(source / relative) if (source / relative).is_file() else 
 (support / "verified-libraries.json").write_text(json.dumps({
     "libraries": records, "runtime": sdk_proof, "runtimeProducer": str(runtime),
     "authoredInputs": authored, "postBuildInputs": after,
-    "config": {"path": str(environment / "config/config.rktd"), "sha256": sha(environment / "config/config.rktd")}
+    "config": {"path": str(environment / "config/config.rktd"), "sha256": sha(environment / "config/config.rktd")},
+    "nativeTools": {"cc": cc, "nm": nm, "system": system, "inspector": inspector}
 }, sort_keys=True, indent=2) + "\n")

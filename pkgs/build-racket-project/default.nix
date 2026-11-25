@@ -201,7 +201,8 @@ assert lib.assertMsg (
   packages = {
     default = project;
     inherit project environment;
-  };
+  }
+  // lib.optionalAttrs (nativeLibraries != { }) { cs-runtime = runtime; };
   tests = project;
   inherit release projections;
   fetches = lock.entries;
