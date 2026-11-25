@@ -53,6 +53,15 @@ for name, spec in json.loads(Path(specifications).read_text()).items():
         owners[str(path)] = {"origin": origin, "relative": relative, "sha256": sha(path)}
     assert str(selected["module"]) in owners, "Native module graph omitted selected module"
     assert any(record["origin"] == "sdk" for record in owners.values()), "Missing original Racket module runtime"
+    compiled = {}
+    for record in graph["compiled"]:
+        path = Path(record["path"]).resolve(strict=True)
+        dependency = Path(record["dependencyRecord"]).resolve(strict=True)
+        original_source = Path(record["source"]).resolve(strict=True)
+        assert str(original_source) in owners, "Unowned native compiled source"
+        assert any(path.is_relative_to(root) and dependency.is_relative_to(root)
+                   for root in (source, environment, sdk)), "Foreign compiled Racket module owner"
+        compiled[str(path)] = {**record, "sha256": sha(path), "dependencySha256": sha(dependency)}
     header_check = subprocess.run([cc, "-x", "c", "-fsyntax-only", "-include", str(selected["header"]), "-"],
                                   input="void *exports[] = {" + ",".join("(void*)&" + symbol for symbol in spec["exports"]) + "};\n",
                                   text=True, capture_output=True)
@@ -84,7 +93,8 @@ for name, spec in json.loads(Path(specifications).read_text()).items():
     for path, record in owners.items():
         assert sha(Path(path)) == record["sha256"], "Resolved Racket source changed during embedding build"
     records[name] = {"specification": spec, "command": command, "moduleGraph": graph,
-                     "moduleOwners": owners, "library": str(library), "librarySha256": sha(library),
+                     "moduleOwners": owners, "compiledModules": compiled,
+                     "library": str(library), "librarySha256": sha(library),
                      "header": str(installed_header), "headerSha256": sha(installed_header),
                      "dynamicSymbols": symbols, "dynamicSection": dynamic}
 authored = {str(path.relative_to(original)): sha(path)
