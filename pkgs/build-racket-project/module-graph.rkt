@@ -1,6 +1,10 @@
 #lang racket/base
 (require json racket/path racket/list syntax/modcode compiler/cm)
 (define args (current-command-line-arguments))
+(define metadata-output (current-output-port))
+;; Ordinary module initialization may print. Preserve those diagnostics without
+;; allowing application output to corrupt this inspector's JSON channel.
+(current-output-port (current-error-port))
 (define root (path->complete-path (vector-ref args 0)))
 (define bindings (call-with-input-file (vector-ref args 1) read-json))
 (dynamic-require root #f)
@@ -59,5 +63,5 @@
                   'builtins (sort (hash-keys builtins) string<?)
                   'compiled (for/list ([name (in-list (sort (hash-keys compiled) string<?))])
                               (hash-ref compiled name))
-                  'compiledPaths (map path->string (use-compiled-file-paths))))
-(newline)
+                  'compiledPaths (map path->string (use-compiled-file-paths))) metadata-output)
+(newline metadata-output)
