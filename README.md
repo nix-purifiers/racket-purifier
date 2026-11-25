@@ -2,6 +2,58 @@
 
 Locked, Nix-resolved dependencies for Racket.
 
+## Native C ABI bridges
+
+Select caller-authored C bridges and original Racket procedure bindings:
+
+```nix
+let built = pkgs.racket-purifier.buildRacketProject {
+  src = ./.;
+  nativeLibraries.answer = {
+    bridge = "bridge.c";
+    header = "native-answer.h";
+    module = "main.rkt";
+    bindings = [ "answer" ];
+    initialize = "answer_init";
+    exports = [ "answer_init" "native_answer" ];
+  };
+}; in built.projections.python-ffi
+```
+
+Normal native package linking, setup and tests still run. The bridge is compiled
+against the selected original CS headers and one shared runtime producer linked
+from its unchanged SDK archive. Every selected bridge binds the same absolute
+immutable runtime library path. The original three boot files and SDK runtime
+libraries remain in the closure; this does not rebuild or patch the Racket SDK.
+The installed authored header is unchanged. `projections.native`,
+`projections.python-ffi`, and `projections.java-ffi` expose the actual libraries.
+
+The compiler defines `RACKET_SDK`, `RACKET_CONFIG_DIR`, `RACKET_ADDON_DIR`, and
+`RACKET_MODULE` as C strings for the original SDK, captured dependency configuration,
+installed project addon directory, and selected module file. Optional `defines`
+contains caller-controlled C feature names. A bridge can initialize CS using the
+original `racket_boot` API and select procedures with `racket_dynamic_require`.
+The `tests/fixtures/native` example has two independent bridge libraries: the first
+boots once and binds a procedure; the second binds a different module in that same
+runtime. Neither renames original Racket bindings nor copies a private VM into each
+library.
+
+Initialize exactly one CS runtime before binding/calling procedures, on the same
+native thread used for subsequent calls, and retain it for the process lifetime.
+Keep boot argument storage alive. Root retained Racket values across allocations
+using the original CS API (the example uses `Slock_object` for procedures).
+The caller owns exception containment and scalar/buffer/object ownership at the
+C boundary. No automatic cross-thread, unload/reload, or arbitrary host-VM
+coexistence guarantee is made. Python examples use `RTLD_NODELETE` and verify that
+explicit CFFI handle closure leaves both bridges and their shared runtime mapped.
+
+The original SDK resolves module imports and procedure exports in the captured
+package/addon context. Build records retain original source ownership and hashes,
+SDK headers/archive/boot identities, runtime and bridge bytes, callable exports,
+and the authored header. Dynamic module loading, foreign operations, and bridge
+ABI types remain application-owned. Native metadata is inspected inside builders;
+evaluation reads only authored inputs.
+
 ## Quickstart
 
 In a package with `info.rkt`:

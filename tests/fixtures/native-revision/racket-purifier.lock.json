@@ -1,0 +1,124 @@
+{
+  "entries": [
+    {
+      "hash": "sha256-fHC/FrZxIq2xWyE4kzsfu0PSHFU7RUxwszmiUGVclIQ=",
+      "mirrors": [],
+      "path": "archives/compiler-lib.zip",
+      "url": "https://download.racket-lang.org/releases/9.3/pkgs/compiler-lib.zip"
+    },
+    {
+      "hash": "sha256-N5W7VjrejA7nfMTuYh+1nnbOREBhr9B9ERaCT7ZIfQw=",
+      "mirrors": [],
+      "path": "archives/rackunit-lib.zip",
+      "url": "https://download.racket-lang.org/releases/9.3/pkgs/rackunit-lib.zip"
+    },
+    {
+      "hash": "sha256-h9/lesHkHn5hXFbSPt0lRIsWy9teB3GUh/IutdB8OMk=",
+      "mirrors": [],
+      "path": "archives/scheme-lib.zip",
+      "url": "https://download.racket-lang.org/releases/9.3/pkgs/scheme-lib.zip"
+    },
+    {
+      "hash": "sha256-WYphQQ7+NfKNE0ndUcTZ2Qv0rlD+KtlPPPEHELqLKfs=",
+      "mirrors": [],
+      "path": "archives/testing-util-lib.zip",
+      "url": "https://download.racket-lang.org/releases/9.3/pkgs/testing-util-lib.zip"
+    },
+    {
+      "hash": "sha256-AfOYmTElttsNfdW7Gl14h4LC+OkVHD4ASeRRcSdYBoA=",
+      "mirrors": [],
+      "path": "archives/zo-lib.zip",
+      "url": "https://download.racket-lang.org/releases/9.3/pkgs/zo-lib.zip"
+    },
+    {
+      "git": {
+        "commitObject": null,
+        "leaveDotGit": false,
+        "rev": "e79cfe551740baf9f696f452d7507a6f2ed00a05",
+        "submodules": false,
+        "url": "https://github.com/lexi-lambda/threading"
+      },
+      "hash": "sha256-9iTG6eR+WsGoIClOFQyiMXeJsI220SkNvh75lh4SslM=",
+      "path": "git/b156aa9293386c005c83695487717f14b6cc1deb202cf1fda987500443fce3e6"
+    }
+  ],
+  "extraInputs": [],
+  "inputs": {
+    "info.rkt": {
+      "content": "#lang info\n(define collection \"purifier-example\")\n(define version \"0.1.0\")\n(define deps '(\"base\" \"threading-lib\"))\n(define build-deps '(\"compiler-lib\" \"rackunit-lib\"))\n",
+      "sha256": "fa3eb3ddad51ab138a4fded6cad19807cdc2d36fef38d9a5d8993af21fa9a63e"
+    }
+  },
+  "packages": [
+    {
+      "checksum": "8270ecc4ff62a0770a89d4c680af2f5e36ee9a37",
+      "entry": "archives/compiler-lib.zip",
+      "name": "compiler-lib",
+      "source": "https://download.racket-lang.org/releases/9.3/pkgs/compiler-lib.zip",
+      "subpath": "",
+      "type": "file-url"
+    },
+    {
+      "checksum": "47fed14bfd620d43a23df987da3d263157e389bd",
+      "entry": "archives/rackunit-lib.zip",
+      "name": "rackunit-lib",
+      "source": "https://download.racket-lang.org/releases/9.3/pkgs/rackunit-lib.zip",
+      "subpath": "",
+      "type": "file-url"
+    },
+    {
+      "checksum": "5e4734e23cb705fb0586e7895ecbedc1572ff7d0",
+      "entry": "archives/scheme-lib.zip",
+      "name": "scheme-lib",
+      "source": "https://download.racket-lang.org/releases/9.3/pkgs/scheme-lib.zip",
+      "subpath": "",
+      "type": "file-url"
+    },
+    {
+      "checksum": "553cf1892b27c1a5eda93770c949859479cfafce",
+      "entry": "archives/testing-util-lib.zip",
+      "name": "testing-util-lib",
+      "source": "https://download.racket-lang.org/releases/9.3/pkgs/testing-util-lib.zip",
+      "subpath": "",
+      "type": "file-url"
+    },
+    {
+      "checksum": "e79cfe551740baf9f696f452d7507a6f2ed00a05",
+      "entry": "git/b156aa9293386c005c83695487717f14b6cc1deb202cf1fda987500443fce3e6",
+      "name": "threading-lib",
+      "source": "git://github.com/lexi-lambda/threading?path=threading-lib",
+      "subpath": "threading-lib",
+      "type": "github"
+    },
+    {
+      "checksum": "86cd5b899d7d253ac90fdb7d131ca7e4ed6d30d0",
+      "entry": "archives/zo-lib.zip",
+      "name": "zo-lib",
+      "source": "https://download.racket-lang.org/releases/9.3/pkgs/zo-lib.zip",
+      "subpath": "",
+      "type": "file-url"
+    }
+  ],
+  "project": {
+    "name": "purifier-example",
+    "version": "0.1.0"
+  },
+  "purifier": "racket",
+  "sdkPackages": [
+    {
+      "checksum": "6272bda442d1c26a40d2403a251665d500147ab3",
+      "name": "base"
+    },
+    {
+      "checksum": "62eb15ddc03bc26a1c0f85c8aff03aa6ef7a518a",
+      "name": "racket-lib"
+    }
+  ],
+  "toolVersions": {
+    "gcc": "16.2.0",
+    "racket": "9.3",
+    "sdk": "726b4dc373c649d3a98ac69c65d1144d627bf709e0846965d39b02aea0789c83"
+  },
+  "version": 1,
+  "vm": "chez-scheme"
+}
