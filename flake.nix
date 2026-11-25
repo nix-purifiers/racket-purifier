@@ -59,6 +59,12 @@
           build = (pkgsFor system).racket-purifier.buildRacketProject { src = ./examples/minimal; };
         in
         {
+          native = import ./tests/native-products.nix { pkgs = pkgsFor system; };
+          native-revision = import ./tests/native-products.nix {
+            pkgs = pkgsFor system;
+            src = ./tests/fixtures/native-revision;
+            expected = 42;
+          };
           inherit (build.packages) environment project;
           release = build.release;
           cli = self.packages.${system}.default;
